@@ -17,23 +17,27 @@ public class StudentManagementController {
     );
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMIN_TRAINER')")
     public List<Student> getAllStudent() {
         return STUDENTS;
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('STUDENT_WRITE')") //method level authorization using spring security
     public Student registerStudent(@RequestBody Student student) {
         System.out.println(student);
         return student;
     }
 
     @PutMapping
+    @PreAuthorize("hasAuthority('STUDENT_WRITE')")
     public Student updateStudent(@RequestBody Student student) {
         System.out.println(student);
         return student;
     }
 
     @DeleteMapping(path = "{studentId}")
+    @PreAuthorize("hasAuthority('STUDENT_WRITE')")
     public String deleteStudent(@PathVariable("studentId") Integer studentId) {
         System.out.println(studentId);
         return "SuccessFully Deleted";
