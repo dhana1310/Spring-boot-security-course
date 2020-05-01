@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/v1/students")
@@ -24,7 +25,7 @@ public class StudentController {
         return STUDENTS.stream()
                 .filter(student -> studentId.equals(student.getStudentId()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new NoSuchElementException(
                         "Student " + studentId + " does not exists"
                 ));
     }

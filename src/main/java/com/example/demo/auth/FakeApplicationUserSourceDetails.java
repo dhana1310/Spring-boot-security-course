@@ -34,7 +34,10 @@ public class FakeApplicationUserSourceDetails implements ApplicationUserReposito
         ApplicationUser applicationUser3 = new ApplicationUser(ADMIN_TRAINEE.getGrantedAuthorities(),
                 "mandeep",passwordEncoder.encode("password"), true, true,
                 true,true);
+        ApplicationUser applicationUser4 = new ApplicationUser(GENERAL_USER.getGrantedAuthorities(),
+                "famia",passwordEncoder.encode("password"), true, true,
+                true,true);
 
-        return List.of(applicationUser1, applicationUser2, applicationUser3);
+        return List.of(applicationUser1, applicationUser2, applicationUser3, applicationUser4);
     }
 }

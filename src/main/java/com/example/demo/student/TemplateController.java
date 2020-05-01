@@ -1,6 +1,7 @@
 package com.example.demo.student;
 
 import com.example.demo.model.Student;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,8 +26,20 @@ public class TemplateController {
         return "login";
     }
 
+    @GetMapping(path = "/accessForbidden")  // directed to this URL in case of access forbidden for browser clients
+    public String getAccessErrorPage() {
+        return "accessForbidden";
+    }
+
     @GetMapping(path = "/courses")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMIN_TRAINER')") //method level authorization using spring security
     public String getCoursesPage() {
         return "courses";
+    }
+
+    @GetMapping(path = "/studentsHomePage")
+    @PreAuthorize("hasAnyAuthority('STUDENT_WRITE', 'STUDENT_READ', 'COURSE_READ', 'COURSE_WRITE')")
+    public String getStudentsHomePage() {
+        return "studentsHomePage";
     }
 }

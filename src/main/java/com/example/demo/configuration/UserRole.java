@@ -11,7 +11,8 @@ public enum UserRole {
 
     ADMIN(Set.of(COURSE_WRITE, COURSE_READ, STUDENT_WRITE, STUDENT_READ)),
     ADMIN_TRAINEE(Set.of(COURSE_READ, STUDENT_READ)),
-    STUDENT(Set.of(STUDENT_READ));
+    STUDENT(Set.of(STUDENT_READ)),
+    GENERAL_USER(Set.of());
     private final Set<UserPermission> permissions;
 
     UserRole(Set<UserPermission> permissions) {

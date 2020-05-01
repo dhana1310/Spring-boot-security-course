@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -28,13 +29,15 @@ import static com.example.demo.configuration.UserRole.*;
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true) // to be used for controller method level authorization using @PreAuthorize
+@EnableGlobalMethodSecurity(prePostEnabled = true) // to be used for controller method level authorization using @PreAuthorize
 @AllArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
 
     private final ApplicationUserDetailsService applicationUserDetailsService;
+
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -71,8 +74,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .usernameParameter("username")
                     .passwordParameter("password")
                     .permitAll()
-                    .defaultSuccessUrl("/courses", true)
+                    .successHandler(authenticationSuccessHandler)  // lands to specific page based on the role of the user
+//                    .defaultSuccessUrl("/courses", true)  // default url, always lands on the this page for all the users
+
                 .and()
+
                 .rememberMe()   // remembering the user login for 30 days, default is 2 weeks
                     .tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(30))
                     .key("someSecuredKey")
@@ -99,10 +105,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         daoAuthenticationProvider.setUserDetailsService(applicationUserDetailsService);
         return daoAuthenticationProvider;
     }
-    /*
 
     // in- memory users details
-
+    /*
     @Override
     @Bean
     protected UserDetailsService userDetailsService() {
