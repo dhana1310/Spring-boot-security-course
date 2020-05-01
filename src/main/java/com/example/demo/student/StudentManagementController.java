@@ -1,5 +1,6 @@
 package com.example.demo.student;
 
+import com.example.demo.model.Student;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
