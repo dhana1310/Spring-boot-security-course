@@ -7,6 +7,9 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +26,7 @@ import java.util.Map;
 @Component
 public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
+    private final RequestCache requestCache = new HttpSessionRequestCache();
 
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -45,11 +49,22 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
     protected void handleRequest(HttpServletRequest request, HttpServletResponse response,
                                  Authentication authentication) throws IOException {
 
-        String targetUrl = determineTargetUrl(authentication);
+        SavedRequest savedRequest = this.requestCache.getRequest(request, response);
+        String targetUrl = "/";
+        if (savedRequest != null) {
+            // if a particular URL(/courses) is called, then request goes on login page
+            // after successful login, will return to the previously asked page(/courses)
+            targetUrl = savedRequest.getRedirectUrl();
 
-        if (response.isCommitted()) {
-            log.debug("Response has already been committed. Unable to redirect to "+ targetUrl);
-            return;
+        } else {
+
+            // if no specific page was called(means called /login), then after successful login
+            // the default page will be called based on the user's ROLE
+            targetUrl = this.determineTargetUrl(authentication);
+            if (response.isCommitted()) {
+                log.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+                return;
+            }
         }
         redirectStrategy.sendRedirect(request, response, targetUrl);
     }
@@ -67,6 +82,7 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
         return "/";
     }
 
+    //  removing any remaining session data after finishing the handling of the request.
     protected void clearAuthenticationAttributes(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {

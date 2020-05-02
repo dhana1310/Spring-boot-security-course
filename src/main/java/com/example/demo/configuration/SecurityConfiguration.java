@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -37,7 +38,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final ApplicationUserDetailsService applicationUserDetailsService;
 
-    private final AuthenticationSuccessHandler authenticationSuccessHandler;
+    private final MySimpleUrlAuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -74,7 +75,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .usernameParameter("username")
                     .passwordParameter("password")
                     .permitAll()
-                    .successHandler(authenticationSuccessHandler)  // lands to specific page based on the role of the user
+                    .successHandler(authenticationSuccessHandler)  // lands on the specific page based on the role of the user(coded for this)
+//                    .successHandler(new SavedRequestAwareAuthenticationSuccessHandler())  // lands on the previously asked page after successful login, else home page("/")
 //                    .defaultSuccessUrl("/courses", true)  // default url, always lands on the this page for all the users
 
                 .and()

@@ -32,7 +32,7 @@ public class TemplateController {
     }
 
     @GetMapping(path = "/courses")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMIN_TRAINER')") //method level authorization using spring security
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMIN_TRAINEE')") //method level authorization using spring security
     public String getCoursesPage() {
         return "courses";
     }
